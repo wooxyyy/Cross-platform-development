@@ -28,4 +28,7 @@ description: 'Зібрати та встановити застосунок',
 status: 'todo',
 priority: 'low',
 },
+{ id: 5, title: 'Підготувати довідку', description: 'Описати правила використання TaskFlow', status: 'done', priority: 'low' },
+{ id: 6, title: 'Перевірити доступність', description: 'Перевірити клавіатуру та контрастність', status: 'progress', priority: 'high' },
+{ id: 7, title: 'Підготувати звіт', description: 'Додати опис реалізації та скриншоти', status: 'todo', priority: 'medium' },
 ];

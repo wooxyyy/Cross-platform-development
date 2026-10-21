@@ -18,6 +18,10 @@
 </div>
 </div>
 <div class="info-card">
+<h3>Довідка</h3>
+<f7-link href="/help/">Правила використання TaskFlow</f7-link>
+</div>
+<div class="info-card">
 <h3>Версія</h3><p>1.0.0 — навчальний проєкт</p>
 </div>
 </div>

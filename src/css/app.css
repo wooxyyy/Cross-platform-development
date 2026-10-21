@@ -10,7 +10,7 @@
 
 .page-heading h1 { margin: 0 0 6px; font-size: 26px; font-weight: 700; }
 .page-heading p { margin: 0; font-size: 14px; color: var(--f7-text-color-secondary, #64748b); }
-.stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
 .stat-card { padding: 20px; border-radius: var(--taskflow-radius); background: #eff6ff; color: #1d4ed8; }
 .stat-card-success { background: #ecfdf5; color: #047857; }
 .stat-card .icon { font-size: 24px; }
@@ -42,13 +42,26 @@
 .app-tabbar { --f7-toolbar-height: 64px; --f7-tabbar-icons-height: 64px; --f7-tabbar-icons-tablet-height: 64px; }
 .app-tabbar .toolbar-inner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 800px; left: 0; right: 0; margin: 0 auto; }
 .app-tabbar .link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; min-width: 0; color:
-#64748b; text-transform: none; }
+#475569; text-transform: none; }
 .app-tabbar .link .icon { font-size: 22px; flex-shrink: 0; }
 .app-tabbar .link .app-tab-label { margin: 0; font-size: 11px; line-height: 1; white-space: nowrap; }
-.app-tabbar .app-link-active { color: var(--taskflow-primary); }
+.app-tabbar .app-link-active { color: #6d28d9; font-weight: 700; }
 @media (max-width: 360px) {
 .app-content { padding: 16px 12px 90px; }
 .stat-card { padding: 14px; }
 .stat-value { font-size: 26px; }
 .app-tabbar .app-tab-label { font-size: 10px; }
+}
+.stat-card-pending { background: #fff7ed; color: #9a3412; }
+a:focus-visible { outline: 3px solid #6d28d9; outline-offset: -3px; border-radius: 6px; }
+.help-rules { margin: 0; padding-left: 22px; line-height: 1.6; }
+.help-rules li + li { margin-top: 12px; }
+.empty-state { padding: 24px 16px; border-radius: 14px; background: var(--f7-card-bg-color, #fff); text-align: center; }
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .stat-card { padding: 16px; border-radius: 12px; }
+  .stat-card-pending { grid-column: 1 / -1; }
+  .task-row { gap: 10px; padding: 12px; }
+  .task-title, .task-description { overflow-wrap: anywhere; }
+  .info-card { padding: 16px; border-radius: 12px; }
 }

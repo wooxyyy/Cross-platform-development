@@ -2,7 +2,7 @@
 <f7-page name="home">
 <f7-navbar title="TaskFlow">
 <f7-nav-right>
-<f7-link href="/about/"><f7-icon f7="info_circle" /></f7-link>
+<f7-link href="/about/" aria-label="Про застосунок"><f7-icon f7="info_circle" /></f7-link>
 </f7-nav-right>
 </f7-navbar>
 <div class="app-content">
@@ -21,6 +21,11 @@
 <div class="stat-value">{{ completedTasks }}</div>
 <div class="stat-label">Виконано</div>
 </div>
+<div class="stat-card stat-card-pending">
+<f7-icon f7="clock" aria-hidden="true" />
+<div class="stat-value">{{ pendingTasks }}</div>
+<div class="stat-label">Очікує виконання</div>
+</div>
 </div>
 <div class="section-heading">
 <h2>Останні завдання</h2>
@@ -28,8 +33,8 @@
 </div>
 <div class="task-list">
 <div v-for="task in recentTasks" :key="task.id" class="task-row">
-<f7-icon :f7="task.completed ? 'checkmark_circle_fill' : 'circle'"
-:class="{ 'completed-icon': task.completed }" />
+<f7-icon :f7="task.status === 'done' ? 'checkmark_circle_fill' : 'circle'"
+:class="{ 'completed-icon': task.status === 'done' }" />
 
 <span>{{ task.title }}</span>
 </div>
@@ -48,6 +53,7 @@ import { computed } from 'vue';
 import AppTabbar from '../components/AppTabbar.vue';
 import { tasks } from '../data/tasks.js';
 const totalTasks = computed(() => tasks.length);
-const completedTasks = computed(() => tasks.filter(t => t.completed).length);
+const completedTasks = computed(() => tasks.filter(t => t.status === 'done').length);
+const pendingTasks = computed(() => totalTasks.value - completedTasks.value);
 const recentTasks = computed(() => tasks.slice(-3).reverse());
 </script>

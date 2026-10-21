@@ -6,19 +6,20 @@
 <h1>Завдання</h1>
 <p>Список поточних завдань</p>
 </div>
-<div class="task-list">
+<div v-if="tasks.length" class="task-list">
 <div v-for="task in tasks" :key="task.id" class="task-row task-row-detail">
-<f7-icon :f7="task.completed ? 'checkmark_circle_fill' : 'circle'"
-:class="{ 'completed-icon': task.completed }" />
+<f7-icon :f7="task.status === 'done' ? 'checkmark_circle_fill' : 'circle'"
+:class="{ 'completed-icon': task.status === 'done' }" />
 <div class="task-details">
 <div class="task-title">{{ task.title }}</div>
 <div class="task-description">{{ task.description }}</div>
 <div class="task-status">
-{{ task.completed ? 'Виконано' : 'Очікує виконання' }}
+{{ statusLabels[task.status] }}
 </div>
 </div>
 </div>
 </div>
+<p v-else class="empty-state" role="status">Завдань поки немає</p>
 <p class="helper-text">
 Створення, редагування та видалення завдань — у наступних заняттях.
 </p>
@@ -32,4 +33,5 @@
 <script setup>
 import AppTabbar from '../components/AppTabbar.vue';
 import { tasks } from '../data/tasks.js';
+const statusLabels = { done: 'Виконано', progress: 'У роботі', todo: 'Очікує виконання' };
 </script>
