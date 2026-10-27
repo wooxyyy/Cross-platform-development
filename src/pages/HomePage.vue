@@ -1,59 +1,72 @@
+<script setup>
+import { ref, computed } from 'vue'
+import AppTabbar from '../components/AppTabbar.vue'
+import TaskCard from '../components/TaskCard.vue'
+import TaskCounter from '../components/TaskCounter.vue'
+import TaskSelection from '../components/TaskSelection.vue'
+import { taskState, setTaskStatus, setTaskPriority } from '../store/tasks'
+import '../css/task-components.css'
+const totalTasks = computed(() => taskState.tasks.length)
+const completedTasks = computed(() => taskState.tasks.filter(
+(task) => task.status === 'done').length)
+const progressTasks = computed(() => taskState.tasks.filter(
+(task) => task.status === 'progress').length)
+const plannedTasks = computed(() => taskState.tasks.filter((task) => task.status === 'todo').length)
+const completionPercent = computed(() => totalTasks.value ? Math.round(completedTasks.value / totalTasks.value * 100) : 0)
+const activeTasks = computed(() => {
+const order = { high: 0, medium: 1, low: 2 }
+return taskState.tasks.filter((task) => task.status !== 'done')
+.sort((a, b) => order[a.priority] - order[b.priority]).slice(0, 3)
+})
+const selectedTaskId = ref(null)
+const selectedTask = computed(() => taskState.tasks.find((task) => task.id === selectedTaskId.value) || null)
+function handleTaskSelect({ id }) { selectedTaskId.value = id }
+function handleStatusChange(payload) { setTaskStatus(payload) }
+function handlePriorityChange(payload) { setTaskPriority(payload) }
+</script>
 <template>
-<f7-page name="home">
+<f7-page name="home" class="tf3-page">
 <f7-navbar title="TaskFlow">
-<f7-nav-right>
-<f7-link href="/about/" aria-label="Про застосунок"><f7-icon f7="info_circle" /></f7-link>
-</f7-nav-right>
+<f7-nav-right><f7-link href="/about/">Про застосунок</f7-link></f7-nav-right>
 </f7-navbar>
-<div class="app-content">
-<div class="page-heading">
-<h1>Головна</h1>
-<p>Огляд ваших завдань</p>
+<div class="tf3-container">
+<section class="tf3-hero">
+<div class="tf3-eyebrow">TASKFLOW / DASHBOARD</div>
+<h1>Панель керування</h1>
+<p>Контролюйте виконання завдань та їхні пріоритети.</p>
+</section>
+<section class="tf3-stat-grid">
+<div class="tf3-stat"><span class="tf3-stat-label">Усього завдань</span>
+<strong>{{ totalTasks }}</strong></div>
+<div class="tf3-stat"><span class="tf3-stat-label">У роботі</span>
+<strong>{{ progressTasks }}</strong></div>
+<div class="tf3-stat"><span class="tf3-stat-label">Виконано</span>
+<strong>{{ completedTasks }}</strong></div>
+<div class="tf3-stat"><span class="tf3-stat-label">Заплановано</span>
+<strong>{{ plannedTasks }}</strong></div>
+</section>
+<section class="tf3-completion" aria-label="Прогрес виконання">
+<TaskCounter :count="totalTasks" label="Усього завдань" />
+<p>Виконано: <strong>{{ completionPercent }}%</strong></p>
+<progress :value="completedTasks" :max="totalTasks || 1" :aria-label="`Виконано ${completionPercent}% завдань`" />
+</section>
+<TaskSelection :task="selectedTask" @close="selectedTaskId = null" />
+<section class="tf3-section">
+<div class="tf3-section-heading">
+<div><div class="tf3-eyebrow">PRIORITY TASKS</div>
+<h2>Актуальні завдання</h2></div>
+<f7-button href="/tasks/" outline small>Переглянути всі</f7-button>
 </div>
-<div class="stats-grid">
-<div class="stat-card">
-<f7-icon f7="square_list" />
-<div class="stat-value">{{ totalTasks }}</div>
-<div class="stat-label">Усього завдань</div>
+<div v-if="activeTasks.length" class="tf3-task-grid">
+<TaskCard v-for="task in activeTasks" :key="task.id" :task="task"
+@status-change="handleStatusChange"
+@priority-change="handlePriorityChange"
+@task-select="handleTaskSelect" />
 </div>
-<div class="stat-card stat-card-success">
-<f7-icon f7="checkmark_circle" />
-<div class="stat-value">{{ completedTasks }}</div>
-<div class="stat-label">Виконано</div>
-</div>
-<div class="stat-card stat-card-pending">
-<f7-icon f7="clock" aria-hidden="true" />
-<div class="stat-value">{{ pendingTasks }}</div>
-<div class="stat-label">Очікує виконання</div>
-</div>
-</div>
-<div class="section-heading">
-<h2>Останні завдання</h2>
-<f7-link href="/tasks/">Переглянути всі</f7-link>
-</div>
-<div class="task-list">
-<div v-for="task in recentTasks" :key="task.id" class="task-row">
-<f7-icon :f7="task.status === 'done' ? 'checkmark_circle_fill' : 'circle'"
-:class="{ 'completed-icon': task.status === 'done' }" />
 
-<span>{{ task.title }}</span>
+<div v-else class="tf3-empty">Наразі всі завдання виконані.</div>
+</section>
 </div>
-</div>
-<f7-button fill large href="/tasks/" class="page-action">
-Перейти до завдань
-</f7-button>
-</div>
-<template #fixed>
-<AppTabbar active="home" />
-</template>
+<template #fixed><AppTabbar active="home" /></template>
 </f7-page>
 </template>
-<script setup>
-import { computed } from 'vue';
-import AppTabbar from '../components/AppTabbar.vue';
-import { tasks } from '../data/tasks.js';
-const totalTasks = computed(() => tasks.length);
-const completedTasks = computed(() => tasks.filter(t => t.status === 'done').length);
-const pendingTasks = computed(() => totalTasks.value - completedTasks.value);
-const recentTasks = computed(() => tasks.slice(-3).reverse());
-</script>

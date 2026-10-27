@@ -1,5 +1,34 @@
-# Vue 3 + Vite
+# TaskFlow
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Навчальний PWA-менеджер завдань на Vue 3, Framework7 і Vite.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Запуск
+
+```sh
+npm install
+npm run dev
+```
+
+Production-збірка: `npm run build`; локальний перегляд: `npm run preview`.
+
+## Можливості
+
+- Головна зі статистикою (10 / 3 у роботі / 3 виконано / 4 заплановано) та прогресом 30%.
+- Повторно використовувані TaskCard, StatusBadge, PriorityBadge та TaskCounter.
+- Спільне реактивне сховище; зміна статусу і пріоритету через Props та Emits.
+- Поєднані фільтри, сортування пріоритету, вибір завдання з переглядом деталей.
+- Адаптивний інтерфейс, фіксована навігація, сторінки About/Help.
+- PWA manifest і service worker у production-збірці.
+
+Стан зберігається у пам’яті й скидається після перезавантаження (відповідно до методички).
+
+## Звіт і перевірки
+
+- [PDF-звіт](output/pdf/TaskFlow_report.pdf)
+- [Текст звіту](reports/report.md)
+- [Контрольні запитання](reports/answers.md)
+- [Результати браузерних перевірок](reports/verification.json)
+- [Скріншоти](reports/screenshots)
+
+Виконано всі шість додаткових завдань із методичних вказівок «2-5.pdf».
+Збірка проходить; Vite попереджає про розмір JS-пакета понад 500 kB.
