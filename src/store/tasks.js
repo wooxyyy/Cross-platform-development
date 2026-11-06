@@ -27,12 +27,12 @@ export function validateTaskData(data, original = null) {
     errors.title = 'Завдання з такою назвою вже існує.'
   }
   if (data?.description != null && typeof data.description !== 'string') errors.description = 'Опис має бути текстом.'
-  else if (description.length > 300) errors.description = 'Опис не повинен перевищувати 300 символів.'
+  else if (description.length > 500) errors.description = 'Опис не повинен перевищувати 500 символів.'
   if (!allowedStatuses.includes(data?.status)) errors.status = 'Оберіть коректний статус.'
   if (!allowedPriorities.includes(data?.priority)) errors.priority = 'Оберіть коректний пріоритет.'
   if (!Object.hasOwn(categoryLabels, data?.category ?? 'study')) errors.category = 'Оберіть коректну категорію.'
-  if (!validDate(data?.dueDate)) errors.dueDate = 'Укажіть коректну дату завершення.'
-  else if (data.dueDate < todayDate() && data.dueDate !== original?.dueDate) {
+  if (data?.dueDate !== '' && !validDate(data?.dueDate)) errors.dueDate = 'Укажіть коректну дату завершення.'
+  else if (data?.dueDate && data.dueDate < todayDate() && data.dueDate !== original?.dueDate) {
     errors.dueDate = 'Нова дата завершення не може бути минулою.'
   }
   return errors
@@ -47,7 +47,7 @@ export function addTask(data) {
   if (!normalized) return null
   const id = taskState.tasks.reduce((maxId, task) => Math.max(maxId, task.id), 0) + 1
   const task = { id, ...normalized }
-  taskState.tasks.push(task)
+  taskState.tasks.unshift(task)
   return task
 }
 export function updateTask(data) {
@@ -67,4 +67,11 @@ export function setTaskPriority({ id, priority }) {
   if (!allowedPriorities.includes(priority)) return
   const task = taskState.tasks.find((item) => item.id === id)
   if (task) task.priority = priority
+}
+
+export function deleteTask(id) {
+  const index = taskState.tasks.findIndex((task) => task.id === Number(id))
+  if (index === -1) return false
+  taskState.tasks.splice(index, 1)
+  return true
 }

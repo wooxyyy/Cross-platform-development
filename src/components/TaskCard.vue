@@ -4,7 +4,7 @@ import { categoryLabels } from '../store/tasks'
 import StatusBadge from './StatusBadge.vue'
 import PriorityBadge from './PriorityBadge.vue'
 const props = defineProps({ task: { type: Object, required: true }, editable: { type: Boolean, default: false } })
-const emit = defineEmits(['status-change', 'priority-change', 'task-select', 'edit'])
+const emit = defineEmits(['status-change', 'priority-change', 'task-select', 'edit', 'delete'])
 const statusSequence = ['todo', 'progress', 'done']
 const prioritySequence = ['low', 'medium', 'high']
 const statusActionText = computed(() => ({
@@ -41,7 +41,7 @@ priority: prioritySequence[(index + 1) % prioritySequence.length],
 <h3 class="tf3-card-title">{{ task.title }}</h3>
 <StatusBadge :status="task.status" />
 </div>
-<p class="tf3-card-description">{{ task.description }}</p>
+<p class="tf3-card-description">{{ task.description || 'Без опису' }}</p>
 <div class="tf3-card-meta">
 <div class="tf3-meta-item">
 <span class="tf3-meta-label">Пріоритет:</span>
@@ -57,6 +57,7 @@ priority: prioritySequence[(index + 1) % prioritySequence.length],
 <button type="button" class="tf3-action tf3-action--primary"
 @click="changeStatus">{{ statusActionText }}</button>
 <button v-if="editable" type="button" class="tf3-action" @click="emit('edit', task.id)">Редагувати</button>
+<button v-if="editable" type="button" class="tf3-action tf5-danger" @click="emit('delete', task.id)">Видалити</button>
 <button type="button" class="tf3-action"
 @click="changePriority">Змінити пріоритет</button>
 </div>

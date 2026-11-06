@@ -1,0 +1,19 @@
+.tf5-panel { margin: 22px 0; padding: 20px; border: 1px solid #28435f; border-radius: 16px; background: #13243a; color: #edf4ff; }
+.tf5-panel h2 { margin: 0 0 18px; font-size: 19px; color: #fff; }
+.tf5-controls-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.tf5-controls-grid label { display: grid; gap: 7px; min-width: 0; color: #d7e4f5; font-size: 13px; font-weight: 600; }
+.tf5-controls-grid input,.tf5-controls-grid select { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #39526f; border-radius: 9px; background: #0c1728; color: #f0f7ff; font: inherit; color-scheme: dark; }
+.tf5-search { grid-column: 1 / -1; }
+.tf5-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.tf5-btn { display: inline-flex; width: auto; align-items: center; justify-content: center; min-height: 40px; padding: 9px 14px; border: 1px solid #526c8c; border-radius: 9px; background: #203550; color: #eff7ff; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; }
+.tf5-btn.is-active { background: #125d83; border-color: #35b4e5; }
+.tf5-btn:hover { filter: brightness(1.12); }
+.tf5-danger { border-color: #b85d6a; color: #ffb6be; background: #4b2230; }
+.tf5-empty { padding: 26px; border: 1px dashed #527090; border-radius: 14px; text-align: center; color: #dae7f6; }
+.tf5-summary { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tf5-dialog { box-sizing: border-box; width: min(480px,calc(100% - 32px)); padding: 26px; border: 1px solid #6d829b; border-radius: 16px; background: #142237; color: #edf4ff; box-shadow: 0 16px 80px #0008; }
+.tf5-dialog::backdrop { background: #030a15bb; }
+.tf5-dialog h2 { margin: 0 0 14px; font-size: 21px; }
+.tf5-dialog p { overflow-wrap: anywhere; line-height: 1.6; }
+.tf5-controls-grid :focus-visible,.tf5-btn:focus-visible,.tf5-dialog :focus-visible { outline: 2px solid #7fe0ff; outline-offset: 3px; }
+@media(max-width:680px) { .tf5-controls-grid { grid-template-columns: 1fr; } .tf5-search { grid-column: auto; } .tf5-panel { padding: 16px; } }
