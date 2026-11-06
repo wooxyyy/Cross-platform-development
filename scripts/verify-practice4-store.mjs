@@ -1,0 +1,21 @@
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const page=await browser.newPage();await page.goto('http://127.0.0.1:5173/');
+const results=await page.evaluate(async()=>{
+ const s=await import('/src/store/tasks.js');
+ const checks=[];
+ const check=(name,value)=>{if(!value)throw Error(name);checks.push(name)};
+ const input={title:'Тест сховища',description:'',status:'todo',priority:'medium',dueDate:'2099-11-20',category:'personal'};
+ check('null rejected',s.addTask(null)===null);
+ for(const data of [{title:'а'},{title:'a'.repeat(81)},{description:'a'.repeat(301)},{description:42},{status:'bad'},{priority:'bad'},{category:'bad'},{dueDate:'2026-02-30'},{dueDate:'2000-01-01'}])check(JSON.stringify(data),s.addTask({...input,...data})===null);
+ const task=s.addTask(input);check('max ID + 1',task.id===11);
+ check('case insensitive duplicate',s.addTask({...input,title:'ТЕСТ СХОВИЩА'})===null);
+ const updated=s.updateTask({...task,title:'Змінений запис'});check('same ID without adding a record',updated.id===task.id&&updated.id===11&&s.taskState.tasks.length===11);
+ const before=JSON.stringify(task);check('invalid update rejected atomically',s.updateTask({...task,title:''})===null&&JSON.stringify(task)===before);
+ const old=s.taskState.tasks[0];check('unchanged historical date accepted',s.updateTask({...old,description:'Оновлений опис'})!==null);
+ check('missing ID rejected',s.updateTask({...input,id:9999})===null);
+ const initial=(await import('/src/data/tasks.js')).default;check('seed objects unchanged',initial[0].description!==old.description);
+ return checks;
+});
+fs.writeFileSync(process.argv[2] ?? 'reports/practice4/store-verification.json',JSON.stringify(results,null,2));console.log(results);await browser.close();

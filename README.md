@@ -22,6 +22,17 @@ Production-збірка: `npm run build`; локальний перегляд: `
 
 Стан зберігається у пам’яті й скидається після перезавантаження (відповідно до методички).
 
+## Практична робота № 4 (2-6.pdf)
+
+- Створення й редагування через TaskForm, локальна копія та скасування.
+- Валідація у формі та сховищі, попередній перегляд, повідомлення про збереження.
+- Усі 7 додаткових завдань: категорії, перевірка дати, залишок символів, очищення, доступність, живий пошук, унікальність нових назв.
+- Звіт: [PDF](output/pdf/TaskFlow_forms_report.pdf), [текст](reports/practice4/report.md), [перевірки T1-T8](reports/practice4/verification.json).
+- Початкових записів 10. Стару дату можна залишити при редагуванні; нова дата має бути не в минулому.
+
+Повторення перевірок: запустіть `npm run dev`, встановіть Playwright окремо (`npm install --no-save --package-lock=false playwright`), використайте встановлений Google Chrome, потім `node scripts/verify-practice4.mjs` і `node scripts/verify-practice4-store.mjs`. PDF можна повторно створити командою `python3 scripts/generate-practice4-report.py` за наявності reportlab і Pillow та шрифтів Arial у macOS.
+
+
 ## Звіт і перевірки
 
 - [PDF-звіт](output/pdf/TaskFlow_report.pdf)
