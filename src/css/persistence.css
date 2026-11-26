@@ -1,0 +1,10 @@
+.tf7-persistence { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 20px 0; padding: 16px; border: 1px solid #385a7a; border-radius: 12px; background: #14283e; color: #e4f2ff; }
+.tf7-persistence p { flex: 1; min-width: 0; margin: 0; }
+.tf7-persistence small { display: block; margin-top: 6px; color: #adcee6; }
+.tf7-persistence--error { border-color: #bb5c68; background: #482938; }
+.tf7-backup { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0; }
+.tf7-file { max-width: 100%; }
+.tf7-stats { padding: 18px; border: 1px solid #385a7a; border-radius: 12px; color: #e4f2ff; }
+.tf7-stats dd { margin: 0 0 16px; font-size: 22px; font-weight: 700; }
+.tf7-stats dt { margin-bottom: 6px; }
+@media (max-width: 680px) { .tf7-persistence { align-items: flex-start; flex-direction: column; } }

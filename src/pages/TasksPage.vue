@@ -9,9 +9,12 @@ import TaskSelection from '../components/TaskSelection.vue'
 import { storeToRefs } from 'pinia'
 import { useTasksStore } from '../store/tasks'
 import { useProjectsStore } from '../store/projects'
+import { persistenceState, retrySave } from '../services/persistence.js'
+import { serializeBackup, validateBackup } from '../services/backup.js'
 import '../css/task-components.css'
 import '../css/task-form.css'
 import '../css/task-list.css'
+import '../css/persistence.css'
 const taskStore = useTasksStore()
 const projectStore = useProjectsStore()
 const {
@@ -21,6 +24,47 @@ const {
 const { projects, projectStats } = storeToRefs(projectStore)
 const projectName = ref('')
 const projectError = ref('')
+const saveMessage = computed(() => ({
+  loading: 'Завантаження локальних даних…', saving: 'Збереження змін…',
+  saved: 'Усі зміни збережено в цьому браузері.', error: persistenceState.error,
+})[persistenceState.status])
+const savedTime = computed(() => persistenceState.lastSavedAt
+  ? new Intl.DateTimeFormat('uk-UA', { dateStyle: 'short', timeStyle: 'medium' }).format(new Date(persistenceState.lastSavedAt)) : '')
+const importDialog = ref(null)
+const pendingImport = ref(null)
+const importError = ref('')
+function exportJson() {
+  const blob = new Blob([serializeBackup(tasks.value, projects.value, projectStore.nextProjectId)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `TaskFlow-${new Date().toISOString().slice(0, 10)}.json`
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+async function selectImport(event) {
+  importError.value = ''
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  try {
+    if (file.size > 5 * 1024 * 1024) throw new Error('Файл завеликий. Максимум - 5 МБ.')
+    pendingImport.value = validateBackup(JSON.parse(await file.text()))
+    importDialog.value?.showModal()
+  } catch (error) { pendingImport.value = null; importError.value = `Імпорт відхилено: ${error.message}` }
+}
+function cancelImport() { importDialog.value?.close(); pendingImport.value = null }
+function confirmImport() {
+  if (!pendingImport.value) return
+  const snapshot = pendingImport.value
+  projectStore.$patch({ projects: snapshot.projects, nextProjectId: snapshot.nextProjectId })
+  taskStore.$patch({ tasks: snapshot.tasks })
+  taskStore.resetFilters()
+  cancelForm()
+  selectedTaskId.value = null
+  feedback.value = 'Дані імпортовано. Дочекайтеся завершення локального збереження.'
+  cancelImport()
+}
 function addProject() {
   const project = projectStore.addProject(projectName.value)
   projectError.value = project ? '' : 'Введіть унікальну назву від 3 до 40 символів.'
@@ -105,6 +149,17 @@ function handlePriorityChange(payload) { taskStore.setTaskPriority(payload) }
 <p>Створюйте, редагуйте, знаходьте, сортуйте та видаляйте завдання.</p>
 <button type="button" class="tf4-new-task" @click="openForm()">+ Додати завдання</button>
 </section>
+<section class="tf7-persistence" :class="`tf7-persistence--${persistenceState.status}`" :data-state="persistenceState.status" role="status" aria-live="polite">
+<p>{{ saveMessage }}<small v-if="savedTime">Останнє збереження: {{ savedTime }}</small></p>
+<button v-if="persistenceState.canRetry" type="button" class="tf5-btn" @click="retrySave">Повторити збереження</button>
+</section>
+<div class="tf7-backup">
+<button type="button" class="tf5-btn" @click="exportJson">Експорт JSON</button>
+<label class="tf5-btn" for="import-json">Імпорт JSON</label>
+<input id="import-json" class="tf7-file" type="file" accept="application/json,.json" aria-label="Імпорт JSON" @change="selectImport" />
+<f7-link href="/settings/">Налаштування</f7-link>
+</div>
+<p v-if="importError" class="tf4-error" role="alert">{{ importError }}</p>
 <p v-if="feedback" class="tf4-feedback" role="status">{{ feedback }}</p>
 <section v-if="formVisible" ref="formAnchor" class="tf4-form-section">
 <TaskForm :tasks="tasks" :projects="projects" :key="editingId ?? 'new'" :task="editingTask" @save="saveTask" @cancel="cancelForm" />
@@ -152,6 +207,14 @@ function handlePriorityChange(payload) { taskStore.setTaskPriority(payload) }
 <button type="button" class="tf5-btn" @click="taskStore.resetFilters()">Показати всі завдання</button></div>
 </section>
 </div>
+<dialog ref="importDialog" class="tf5-dialog" aria-labelledby="import-heading" @cancel.prevent="cancelImport">
+<h2 id="import-heading">Замінити поточні дані?</h2>
+<p>Буде імпортовано завдань: {{ pendingImport?.tasks.length }}, проєктів: {{ pendingImport?.projects.length }}. Поточні списки буде перезаписано.</p>
+<div class="tf5-actions">
+<button type="button" class="tf5-btn" autofocus @click="cancelImport">Скасувати</button>
+<button type="button" class="tf5-btn tf5-btn--primary" @click="confirmImport">Замінити дані</button>
+</div>
+</dialog>
 <dialog ref="bulkDialog" class="tf5-dialog" aria-labelledby="bulk-heading" @cancel.prevent="closeBulkDialog">
 <h2 id="bulk-heading">Взяти проєкт у роботу?</h2>
 <p>Усі завдання проєкту «{{ projectStore.projectTitle(bulkProjectId) }}» матимуть статус «У роботі».</p>
