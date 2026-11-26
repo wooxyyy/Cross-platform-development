@@ -60,4 +60,4 @@ Production-збірка: `npm run build`; локальний перегляд: `
 
 Перевірки: `npm ci`, `npm run build`. Для браузерних сценаріїв встановіть Playwright (`npm install --no-save --package-lock=false playwright`), запустіть dev-сервер і виконайте `node scripts/verify-practice6.mjs`. Потрібен Google Chrome. Скрипт використовує dev-режим для читання Pinia через Vue app.
 
-Результати та скріншоти: `reports/practice6/`. Звіт: `output/pdf/TaskFlow_Pinia_report.pdf` і `output/docx/TaskFlow_Pinia_report.docx`. Знімки Vue Devtools одержано через тимчасову локальну QA-конфігурацію; production-конфігурація Vite не змінювалась.
+Звіти, скріншоти та результати перевірок зберігаються поза проєктом. Скрипти перевірки за замовчуванням записують результати до `~/Downloads/TaskFlow-reports/practiceN/`. Каталоги `reports/` і `output/` виключені з Git.

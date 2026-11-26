@@ -1,7 +1,9 @@
+import os from 'node:os';
+import path from 'node:path';
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-const out=process.argv[2] ?? 'reports/practice5';
+const out=process.argv[2] ?? path.join(os.homedir(), 'Downloads', 'TaskFlow-reports', 'practice5');
 fs.mkdirSync(`${out}/screenshots`,{recursive:true});
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const page=await browser.newPage({viewport:{width:1180,height:1000},timezoneId:'Europe/Kyiv'});

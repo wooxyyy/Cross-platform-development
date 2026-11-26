@@ -29,3 +29,7 @@ dev-dist
 
 # Local report rendering and temporary QA configuration
 /tmp/
+
+# Reports and verification artifacts stay outside the project
+reports/
+output/

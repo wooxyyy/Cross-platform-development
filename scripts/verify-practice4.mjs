@@ -1,7 +1,9 @@
+import os from 'node:os';
+import path from 'node:path';
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-const out=process.argv[2] ?? 'reports/practice4';
+const out=process.argv[2] ?? path.join(os.homedir(), 'Downloads', 'TaskFlow-reports', 'practice4');
 const browser=await chromium.launch({channel:'chrome',headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:1000},timezoneId:'Europe/Kyiv'});
 const runtimeErrors=[];page.on('pageerror',e=>runtimeErrors.push(e.message));

@@ -1,3 +1,5 @@
+import os from 'node:os';
+import path from 'node:path';
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 const browser=await chromium.launch({channel:'chrome',headless:true});
@@ -18,4 +20,6 @@ const results=await page.evaluate(async()=>{
  const initial=(await import('/src/data/tasks.js')).default;check('seed objects unchanged',initial[0].description!==old.description);
  return checks;
 });
-fs.writeFileSync(process.argv[2] ?? 'reports/practice4/store-verification.json',JSON.stringify(results,null,2));console.log(results);await browser.close();
+const destination = process.argv[2] ?? path.join(os.homedir(), 'Downloads', 'TaskFlow-reports', 'practice4', 'store-verification.json');
+fs.mkdirSync(path.dirname(destination), { recursive: true });
+fs.writeFileSync(destination,JSON.stringify(results,null,2));console.log(results);await browser.close();
