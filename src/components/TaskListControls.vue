@@ -3,10 +3,13 @@ defineProps({
   search: { type: String, default: '' },
   status: { type: String, default: 'all' },
   priority: { type: String, default: 'all' },
+  projects: { type: Array, required: true },
+  project: { type: String, default: 'all' },
+  withoutDueDate: { type: Boolean, default: false },
   sort: { type: String, default: 'newest' },
   incomplete: { type: Boolean, default: false },
 })
-const emit = defineEmits(['update:search', 'update:status', 'update:priority', 'update:sort', 'update:incomplete', 'reset'])
+const emit = defineEmits(['update:search', 'update:status', 'update:priority', 'update:sort', 'update:project', 'update:withoutDueDate', 'update:incomplete', 'reset'])
 </script>
 <template>
 <section class="tf5-panel" aria-label="Пошук і фільтри">
@@ -28,7 +31,13 @@ const emit = defineEmits(['update:search', 'update:status', 'update:priority', '
         <option value="medium">Середній</option><option value="high">Високий</option>
       </select>
     </label>
-    <label class="tf5-search" for="task-sort">Сортування
+    <label for="task-project">Проєкт
+      <select id="task-project" :value="project" @change="emit('update:project', $event.target.value)">
+        <option value="all">Усі проєкти</option>
+        <option v-for="item in projects" :key="item.id" :value="item.id">{{ item.title }}</option>
+      </select>
+    </label>
+    <label for="task-sort">Сортування
       <select id="task-sort" :value="sort" @change="emit('update:sort', $event.target.value)">
         <option value="newest">Спочатку нові</option><option value="title">За назвою (А–Я)</option>
         <option value="priority">За пріоритетом (високий перший)</option>
@@ -43,6 +52,8 @@ const emit = defineEmits(['update:search', 'update:status', 'update:priority', '
   <div class="tf5-actions">
     <button type="button" class="tf5-btn" :class="{ 'is-active': incomplete }" :aria-pressed="incomplete"
       @click="emit('update:incomplete', !incomplete)">Тільки невиконані</button>
+    <button type="button" class="tf5-btn" :class="{ 'is-active': withoutDueDate }" :aria-pressed="withoutDueDate"
+      @click="emit('update:withoutDueDate', !withoutDueDate)">Лише без терміну</button>
     <button v-if="search" type="button" class="tf5-btn" @click="emit('update:search', '')">Очистити пошук</button>
     <button type="button" class="tf5-btn" @click="emit('reset')">Скинути фільтри</button>
   </div>

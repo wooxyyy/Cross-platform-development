@@ -17,3 +17,53 @@
 .tf5-dialog p { overflow-wrap: anywhere; line-height: 1.6; }
 .tf5-controls-grid :focus-visible,.tf5-btn:focus-visible,.tf5-dialog :focus-visible { outline: 2px solid #7fe0ff; outline-offset: 3px; }
 @media(max-width:680px) { .tf5-controls-grid { grid-template-columns: 1fr; } .tf5-search { grid-column: auto; } .tf5-panel { padding: 16px; } }
+
+.tf6-project-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  margin: 0 0 18px;
+}
+
+.tf6-project-pill {
+  padding: 9px 12px;
+  border: 1px solid #385a7a;
+  border-radius: 12px;
+  background: #1a344f;
+  color: #e4f2ff;
+  font-size: 13px;
+  list-style: none;
+  overflow-wrap: anywhere;
+}
+
+.tf6-project-pill strong { color: #71d7ff; }
+
+.tf6-project-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  max-width: 620px;
+}
+
+.tf6-project-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.tf6-project-form input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #39526f;
+  border-radius: 9px;
+  background: #0c1728;
+  color: #f0f7ff;
+  font: inherit;
+}
+
+@media (max-width: 680px) {
+  .tf6-project-form { grid-template-columns: 1fr; }
+}

@@ -1,14 +1,18 @@
 <script setup>
 import { computed, nextTick, reactive, ref } from 'vue'
 import { categoryLabels, validateTaskData } from '../store/tasks'
-const props = defineProps({ task: { type: Object, default: null } })
+const props = defineProps({ task: { type: Object, default: null }, projects: { type: Array, required: true }, tasks: { type: Array, required: true } })
 const emit = defineEmits(['save', 'cancel'])
-const defaults = () => ({ title: '', description: '', status: 'todo', priority: 'medium', dueDate: '', category: 'study' })
+const defaults = () => ({ title: '', description: '', status: 'todo', priority: 'medium', dueDate: '', category: 'study', projectId: 'general' })
 const form = reactive({ ...defaults(), ...props.task })
 const showErrors = ref(false)
 const formElement = ref(null)
 const isEditing = computed(() => props.task !== null)
-const errors = computed(() => validateTaskData(form, props.task))
+const errors = computed(() => {
+  const errors = validateTaskData(form, props.task, props.tasks)
+  if (!props.projects.some(project => project.id === form.projectId)) errors.projectId = 'Оберіть проєкт зі списку.'
+  return errors
+})
 const statusLabels = { todo: 'Заплановано', progress: 'У роботі', done: 'Виконано' }
 const priorityLabels = { low: 'Низький', medium: 'Середній', high: 'Високий' }
 async function submitForm() {
@@ -19,7 +23,7 @@ async function submitForm() {
     return
   }
   emit('save', { title: form.title.trim(), description: form.description.trim(),
-    status: form.status, priority: form.priority, dueDate: form.dueDate, category: form.category })
+    status: form.status, priority: form.priority, dueDate: form.dueDate, category: form.category, projectId: form.projectId })
 }
 function clearForm() {
   Object.assign(form, defaults())
@@ -59,6 +63,13 @@ function clearForm() {
         <option v-for="(label, value) in ({ status: statusLabels, priority: priorityLabels, category: categoryLabels }[field])" :key="value" :value="value">{{ label }}</option>
       </select>
       <p v-if="showErrors && errors[field]" :id="`tf4-${field}-error`" class="tf4-error">{{ errors[field] }}</p>
+    </div>
+    <div class="tf4-field">
+      <label for="tf4-project">Проєкт</label>
+      <select id="tf4-project" v-model="form.projectId" :aria-invalid="showErrors && !!errors.projectId">
+        <option v-for="project in projects" :key="project.id" :value="project.id">{{ project.title }}</option>
+      </select>
+      <p v-if="showErrors && errors.projectId" class="tf4-error">{{ errors.projectId }}</p>
     </div>
     <div class="tf4-field">
       <label for="tf4-date">Дата завершення (необов’язково)</label>

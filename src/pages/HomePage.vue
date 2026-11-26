@@ -4,25 +4,20 @@ import AppTabbar from '../components/AppTabbar.vue'
 import TaskCard from '../components/TaskCard.vue'
 import TaskCounter from '../components/TaskCounter.vue'
 import TaskSelection from '../components/TaskSelection.vue'
-import { taskState, setTaskStatus, setTaskPriority } from '../store/tasks'
+import { storeToRefs } from 'pinia'
+import { useTasksStore } from '../store/tasks'
+import { useProjectsStore } from '../store/projects'
 import '../css/task-components.css'
-const totalTasks = computed(() => taskState.tasks.length)
-const completedTasks = computed(() => taskState.tasks.filter(
-(task) => task.status === 'done').length)
-const progressTasks = computed(() => taskState.tasks.filter(
-(task) => task.status === 'progress').length)
-const plannedTasks = computed(() => taskState.tasks.filter((task) => task.status === 'todo').length)
-const completionPercent = computed(() => totalTasks.value ? Math.round(completedTasks.value / totalTasks.value * 100) : 0)
-const activeTasks = computed(() => {
-const order = { high: 0, medium: 1, low: 2 }
-return taskState.tasks.filter((task) => task.status !== 'done')
-.sort((a, b) => order[a.priority] - order[b.priority]).slice(0, 3)
-})
+import '../css/task-list.css'
+const taskStore = useTasksStore()
+const projectStore = useProjectsStore()
+const { tasks, totalTasks, completedTasks, progressTasks, plannedTasks, completionPercent, activeTasks } = storeToRefs(taskStore)
+const { projects, projectStats } = storeToRefs(projectStore)
 const selectedTaskId = ref(null)
-const selectedTask = computed(() => taskState.tasks.find((task) => task.id === selectedTaskId.value) || null)
+const selectedTask = computed(() => tasks.value.find((task) => task.id === selectedTaskId.value) || null)
 function handleTaskSelect({ id }) { selectedTaskId.value = id }
-function handleStatusChange(payload) { setTaskStatus(payload) }
-function handlePriorityChange(payload) { setTaskPriority(payload) }
+function handleStatusChange(payload) { taskStore.setTaskStatus(payload) }
+function handlePriorityChange(payload) { taskStore.setTaskPriority(payload) }
 </script>
 <template>
 <f7-page name="home" class="tf3-page">
@@ -50,6 +45,14 @@ function handlePriorityChange(payload) { setTaskPriority(payload) }
 <p>Виконано: <strong>{{ completionPercent }}%</strong></p>
 <progress :value="completedTasks" :max="totalTasks || 1" :aria-label="`Виконано ${completionPercent}% завдань`" />
 </section>
+<section class="tf5-panel" aria-label="Статистика за проєктами">
+<h2>Мої проєкти</h2>
+<ul class="tf6-project-list">
+<li v-for="project in projects" :key="project.id" class="tf6-project-pill">
+{{ project.title }} · Невиконано: {{ projectStats[project.id].incomplete }} · Виконано: {{ projectStats[project.id].percent }} %
+</li>
+</ul>
+</section>
 <TaskSelection :task="selectedTask" @close="selectedTaskId = null" />
 <section class="tf3-section">
 <div class="tf3-section-heading">
@@ -58,7 +61,7 @@ function handlePriorityChange(payload) { setTaskPriority(payload) }
 <f7-button href="/tasks/" outline small>Переглянути всі</f7-button>
 </div>
 <div v-if="activeTasks.length" class="tf3-task-grid">
-<TaskCard v-for="task in activeTasks" :key="task.id" :task="task"
+<TaskCard v-for="task in activeTasks" :key="task.id" :task="task" :project-title="projectStore.projectTitle(task.projectId)"
 @status-change="handleStatusChange"
 @priority-change="handlePriorityChange"
 @task-select="handleTaskSelect" />

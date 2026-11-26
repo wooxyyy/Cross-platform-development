@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { categoryLabels } from '../store/tasks'
 import StatusBadge from './StatusBadge.vue'
 import PriorityBadge from './PriorityBadge.vue'
-const props = defineProps({ task: { type: Object, required: true }, editable: { type: Boolean, default: false } })
+const props = defineProps({ task: { type: Object, required: true }, projectTitle: { type: String, default: 'Загальні' }, editable: { type: Boolean, default: false } })
 const emit = defineEmits(['status-change', 'priority-change', 'task-select', 'edit', 'delete'])
 const statusSequence = ['todo', 'progress', 'done']
 const prioritySequence = ['low', 'medium', 'high']
@@ -48,6 +48,7 @@ priority: prioritySequence[(index + 1) % prioritySequence.length],
 <PriorityBadge :priority="task.priority" />
 </div>
 <div class="tf3-meta-date">Категорія: {{ categoryLabels[task.category ?? 'study'] }}</div>
+<div class="tf3-meta-date">Проєкт: {{ projectTitle }}</div>
 <div class="tf3-meta-date">Термін: {{ formattedDate }}</div>
 </div>
 <div class="tf3-card-actions">
